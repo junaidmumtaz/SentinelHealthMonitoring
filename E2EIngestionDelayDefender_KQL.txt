@@ -1,0 +1,10 @@
+let startTime = datetime("2025-01-23 05:00:00");
+let endTime = datetime("2025-01-24 05:00:00");
+DeviceEvents
+| where Timestamp > startTime and Timestamp < endTime
+| extend EventTime = Timestamp
+| extend TimeToAzure = _TimeReceived - Timestamp
+| extend IngestionTime = ingestion_time() - _TimeReceived
+| extend TotalLatency = ingestion_time() - Timestamp
+| project Timestamp, EventTime, _TimeReceived, TimeToAzure, ingestion_time(), IngestionTime, TotalLatency
+| sort by TotalLatency desc
