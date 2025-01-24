@@ -1,3 +1,4 @@
 test KQL
 hello
 hi
+test
