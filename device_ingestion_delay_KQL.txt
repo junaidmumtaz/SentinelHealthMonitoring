@@ -1,0 +1,6 @@
+union Device*
+| where TimeGenerated >= ago(24h)
+| extend TotalIngestionLatency = ingestion_time() - Timestamp
+| extend AgentLatency = _TimeReceived - Timestamp 
+| project DeviceName, Timestamp, _TimeReceived, ingestion_time(), AgentLatency, TotalIngestionLatency
+| order by TotalIngestionLatency desc
