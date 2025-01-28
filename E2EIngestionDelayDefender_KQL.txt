@@ -1,10 +1,22 @@
-let startTime = datetime("2025-01-23 05:00:00");
-let endTime = datetime("2025-01-24 05:00:00");
+// Define the start and end times for filtering the events.
+let startTime = datetime("2025-01-01 00:00:00");
+let endTime = datetime("2025-01-30 00:00:00");
+// Query the DeviceEvents table for events that occurred within the specified time range.
 DeviceEvents
-| where Timestamp > startTime and Timestamp < endTime
+| where Timestamp > startTime and Timestamp < endTime  // Filter events based on the defined time range.
+// Add an EventTime column to explicitly represent the event's timestamp.
 | extend EventTime = Timestamp
 | extend TimeToAzure = _TimeReceived - Timestamp
 | extend IngestionTime = ingestion_time() - _TimeReceived
+// Calculate the total latency from the event timestamp to its ingestion in Azure.
 | extend TotalLatency = ingestion_time() - Timestamp
-| project Timestamp, EventTime, _TimeReceived, TimeToAzure, ingestion_time(), IngestionTime, TotalLatency
+| project
+    Timestamp,
+    EventTime,
+    _TimeReceived,
+    TimeToAzure,
+    ingestion_time(),
+    IngestionTime,
+    TotalLatency
+// Sort the results by TotalLatency in descending order to highlight the events with the highest latency.
 | sort by TotalLatency desc
